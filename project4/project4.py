@@ -3,8 +3,8 @@ Math 590
 Project 4
 Fall 2018
 
-Partner 1: Hanyu Xie  (hx54)
-Partner 2: Xu Zheng   (xz233)
+Partner 1: Hanyu Xie    hx54
+Partner 2: Xu Zheng     xz233
 Date: 11/29/2018
 """
 
@@ -15,22 +15,34 @@ import random
 
 """
 Prim's Algorithm
+generate minimal spanning tree by altering prev pointer of vertex
+input:
+    adjList: adjacency list of graph
+    adjMat: adjacency matrix of graph
+output:
+    null
 """
 def prim(adjList, adjMat):
-    ##### Your implementation goes here. #####
+
     Q = MinQueue()
+    # initialize all costs to inf and prev to null
     for vertex in adjList:
         vertex.visited = False
         vertex.cost = math.inf
         vertex.prev = None
+        # make the priority queue using cost for sorting
         Q.insert(vertex)
+    # pick an arbitrary start vertex and set cost to 0
     start = adjList[random.randint(0, len(adjList)-1)]
     start.cost = 0
 
     while not Q.isEmpty():
+        # get next unvisited vertex
         v = Q.deleteMin()
         v.visited = True
+        # for each edge of v
         for neighbor in v.neigh:
+            # if the edge leads out, update
             if neighbor.cost > adjMat[v.rank][neighbor.rank] and neighbor.visited is False:
                 neighbor.cost = adjMat[v.rank][neighbor.rank]
                 neighbor.prev = v
@@ -39,43 +51,66 @@ def prim(adjList, adjMat):
 
 """
 Kruskal's Algorithm
+generate minimal spanning tree bu returning list of edges
 Note: the edgeList is ALREADY SORTED!
 Note: Use the isEqual method of the Vertex class when comparing vertices.
+input: 
+    adjList: adjacency list of graph
+    edgeList: list of sorted edge
+output:
+    edgeListMST: list of edges contained in MST
 """
 def kruskal(adjList, edgeList):
-    ##### Your implementation goes here. #####
+    # initialize all singleton sets for each vertex
     for vertex in adjList:
         makeset(vertex)
-    edgeListMST = []
-
+    # initialize returning list
+    mstEdge = []
+    # loop through the edges in increasing order
     for e in edgeList:
         u, v = e.vertices
+        # if the min edge crosses a cut(two vertices from different sets), add it to MST
         if not find(u).isEqual(find(v)):
-            edgeListMST.append(e)
+            mstEdge.append(e)
             union(u, v)
-    return edgeListMST
+    return mstEdge
 
 ################################################################################
 
 """
 TSP
+Traveling Salesperson Problem
+find the cheapest tour(circle) of the graph that 
+visits every vertex only once except starting vertex
+input: 
+    adjList: adjacency list of the graph
+    start: starting vertex
+output:
+    list of rank of the tour 
 """
 def tsp(adjList, start):
-    ##### Your implementation goes here. #####
+    # initialize returning list
     tour = []
+    # initialize stack used for dfs
     stack = []
+    # mark all vertices as unvisited
     for vertex in adjList:
         vertex.visited = False
+    # add starting vertex into stack
     stack.append(start)
     start.visited = True
     while stack:
+        # get current vertex, add into tour list
         vertex = stack.pop()
         tour.append(vertex.rank)
+        # search for every vertex of the current vertex in MST
         for neighbor in vertex.mstN:
             if neighbor.visited:
                 continue
+            # push unvisited vertex into stack
             neighbor.visited = True
             stack.append(neighbor)
+    # again add starting vertex into tour
     tour.append(start.rank)
     return tour
 
@@ -92,10 +127,15 @@ These functions will operate directly on the input vertex objects.
 
 """
 makeset: this function will create a singleton set with root v.
+input:
+    v: vertex
+output:
+    null
 """
 def makeset(v):
-    ##### Your implementation goes here. #####
+    # initialize its parent to itself
     v.pi = v
+    # initialize its height to 0
     v.height = 0
     return
 
@@ -103,28 +143,40 @@ def makeset(v):
 find: this function will return the root of the set that contains v.
 Note: You should use path compression here.
 Note: Use the isEqual method of the Vertex class when comparing vertices.
+input:
+    v: vertex
+output:
+    root of the set that contains v
 """
 def find(v):
-    ##### Your implementation goes here. #####
+    # if v is not parent
     if not v.isEqual(v.pi):
+        # recursively find its parent, with path compression
         v.pi = find(v.pi)
     return v.pi
 
 """
 union: this function will union the sets of vertices v and u.
 Note: Use the isEqual method of the Vertex class when comparing vertices.
+input:
+    u, v: vertex
+output:
+    null
 """
 def union(u,v):
-    ##### Your implementation goes here. #####
+    # find parent for u, v
     up = find(u)
     vp = find(v)
-
+    # if they have same parent, return
     if up.isEqual(vp):
         return
+    # else they are from different set, union them
+    # make shorter set point to taller set
     if up.height > vp.height:
         vp.pi = up
     elif up.height < vp.height:
         up.pi = vp
+    # else they are in same height, break tie
     else:
         up.pi = vp
         vp.height = vp.height + 1
@@ -805,5 +857,6 @@ def testMaps(alg):
     return s
 
 ################################################################################
-print(testMaps("Kruskal"))
+
 print(testMaps("Prim"))
+print(testMaps("Kruskal"))

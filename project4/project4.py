@@ -63,6 +63,20 @@ TSP
 def tsp(adjList, start):
     ##### Your implementation goes here. #####
     tour = []
+    stack = []
+    for vertex in adjList:
+        vertex.visited = False
+    stack.append(start)
+    start.visited = True
+    while stack:
+        vertex = stack.pop()
+        tour.append(vertex.rank)
+        for neighbor in vertex.mstN:
+            if neighbor.visited:
+                continue
+            neighbor.visited = True
+            stack.append(neighbor)
+    tour.append(start.rank)
     return tour
 
 ################################################################################
@@ -791,4 +805,5 @@ def testMaps(alg):
     return s
 
 ################################################################################
-testMaps("Kruskal")
+print(testMaps("Kruskal"))
+print(testMaps("Prim"))

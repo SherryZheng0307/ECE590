@@ -44,8 +44,16 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def kruskal(adjList, edgeList):
     ##### Your implementation goes here. #####
-    X = []
-    return X
+    for vertex in adjList:
+        makeset(vertex)
+    edgeListMST = []
+
+    for e in edgeList:
+        u, v = e.vertices
+        if not find(u).isEqual(find(v)):
+            edgeListMST.append(e)
+            union(u, v)
+    return edgeListMST
 
 ################################################################################
 
@@ -73,6 +81,8 @@ makeset: this function will create a singleton set with root v.
 """
 def makeset(v):
     ##### Your implementation goes here. #####
+    v.pi = v
+    v.height = 0
     return
 
 """
@@ -82,6 +92,8 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def find(v):
     ##### Your implementation goes here. #####
+    if not v.isEqual(v.pi):
+        v.pi = find(v.pi)
     return v.pi
 
 """
@@ -90,6 +102,18 @@ Note: Use the isEqual method of the Vertex class when comparing vertices.
 """
 def union(u,v):
     ##### Your implementation goes here. #####
+    up = find(u)
+    vp = find(v)
+
+    if up.isEqual(vp):
+        return
+    if up.height > vp.height:
+        vp.pi = up
+    elif up.height < vp.height:
+        up.pi = vp
+    else:
+        up.pi = vp
+        vp.height = vp.height + 1
     return
 
 ################################################################################
@@ -767,4 +791,4 @@ def testMaps(alg):
     return s
 
 ################################################################################
-testMaps("Prim")
+testMaps("Kruskal")

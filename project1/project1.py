@@ -7,7 +7,7 @@ Partner 1: Hanyu Xie hx54
 Partner 2: Xu Zheng  xz233
 Date: 10/25/2018
 """
-
+# git branch test: in mynewbranch
 # Import time, random, plotting, stats, and numpy.
 import time
 import random
